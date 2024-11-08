@@ -111,9 +111,15 @@ export default function Navbar() {
         >
           Feed
         </a>
+        <a
+          className="border-r-2 h-full px-6 font-poppinsbold border-black text-2xl text-accent hidden lg:flex items-center"
+          href="#"
+        >
+          Create
+        </a>
       </div>
 
-      <div className="navbar-center flex justify-center items-center">
+      <div className="navbar-center flex justify-center items-center pl-10">
         {/* Centered Search Bar */}
         <SearchBar
           setResults={setSearchResults}
