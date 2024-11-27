@@ -46,7 +46,7 @@ const PostBox = (post_id) => {
           <h3 className="text-[2vw] ml-4">Title</h3>
         </div>
       </div>
-      <div className="text-[1.5vw] w-full max-h-[15.3vw] border-y-4 border-black overflow-hidden text-ellipsis line-clamp-6 p-4 text-justify">
+      <div className="text-[1.5vw] w-full border-y-4 border-black overflow-hidden text-ellipsis p-4 text-justify">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis tenetur
         laboriosam, minus eos libero atque maiores repudiandae exercitationem
         voluptas laudantium sunt. Itaque tempora accusantium reprehenderit
