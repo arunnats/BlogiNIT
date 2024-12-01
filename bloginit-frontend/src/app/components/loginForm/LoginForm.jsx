@@ -6,18 +6,27 @@ import { useBackendStatus } from "@/app/context/BackendStatusContext";
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { setIsLoggedIn } = useBackendStatus();
+  const { setIsLoggedIn, setUserId, setProfilePic } = useBackendStatus();
   const [error, setError] = useState("");
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post("https://your-backend-url.com/login", {
+      const response = await axios.post("http://localhost:4000/login", {
         email,
         password,
       });
 
       if (response.status === 200) {
+        const { token, user } = response.data;
+
+        // Store the token in localStorage or cookies
+        localStorage.setItem("authToken", token);
+
+        // Update the context state
         setIsLoggedIn(true);
+        setUserId(user.user_id);
+        setProfilePic(user.profile_pic);
+
         setError("");
         alert("Logged in successfully!");
       }

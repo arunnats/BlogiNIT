@@ -16,7 +16,6 @@ const ProfileCreation = () => {
   };
 
   const handleSignup = async () => {
-    // Password matching validation
     if (password !== repeatPassword) {
       setError("Passwords do not match.");
       return;
@@ -30,7 +29,7 @@ const ProfileCreation = () => {
 
     try {
       const response = await axios.post(
-        "https://your-backend-url.com/signup",
+        "http://localhost:4000/register",
         formData,
         {
           headers: {

@@ -7,7 +7,7 @@ import { useBackendStatus } from "@/app/context/BackendStatusContext";
 export default function Home() {
   const isBackendUp = useBackendStatus();
 
-  console.log(isBackendUp);
+  //console.log(isBackendUp);
   return (
     <div className="min-h-screen bg-background">
       <Navbar />

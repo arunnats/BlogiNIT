@@ -1,42 +1,46 @@
 const express = require("express");
 const passport = require("passport");
+const app = express();
 const cors = require("cors");
 require("dotenv").config();
 const bcrypt = require("bcryptjs");
 const userDb = require("./models/User");
 const commentDb = require("./models/Comment");
 const postDb = require("./models/Post");
-
 const { generateToken } = require("./config/passport");
+// const postRoutes = require('./routes/postRoutes');
+// const commentRoutes = require('./routes/commentRoutes');
+const multer = require("multer");
 
-const app = express();
+// Configure multer for in-memory storage
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+const PORT = 4000;
 
 app.use(express.json());
-
-app.get("/", (req, res) => {
-  res.status(200).json({ message: "The server is running" });
-});
-const postRoutes = require("./routes/postRoutes");
-const commentRoutes = require("./routes/commentRoutes");
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "http://localhost:3000",
   })
 );
 
-app.use(express.json());
+// Backend online check
+app.get("/health", (req, res) => {
+  res.status(200).json({ message: "The server is running" });
+});
 
-const PORT = 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // Register Route
-app.post("/register", async (req, res) => {
+app.post("/register", upload.single("profile_pic"), async (req, res) => {
   const { username, email, password } = req.body;
+  const profilePic = req.file ? req.file.buffer : null; // Store the profile picture as a buffer
 
   // Check if user already exists
   const existingUser = await userDb.getUserByEmail(email);
   if (existingUser) {
+    console.log("User already exists");
     return res.status(400).json({ message: "User already exists" });
   }
 
@@ -45,9 +49,33 @@ app.post("/register", async (req, res) => {
 
   // Create user in database
   try {
-    const newUser = await userDb.createUser(username, email, hashedPassword);
+    const newUser = await userDb.createUser(
+      username,
+      email,
+      hashedPassword,
+      profilePic
+    );
     const token = generateToken(newUser);
+    console.log("User created successfully");
     res.status(201).json({ message: "User created successfully", token });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Route to fetch user profile picture
+app.get("/profile-pic/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await userDb.getUserById(id);
+    if (!user || !user.profile_pic) {
+      return res.status(404).json({ message: "Profile picture not found" });
+    }
+
+    res.set("Content-Type", "image/png"); // Adjust if you use another format
+    res.send(user.profile_pic);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
@@ -58,9 +86,23 @@ app.post("/register", async (req, res) => {
 app.post(
   "/login",
   passport.authenticate("local", { session: false }),
-  (req, res) => {
-    const token = generateToken(req.user); // Generate JWT token for logged-in user
-    res.json({ message: "Login successful", token });
+  async (req, res) => {
+    try {
+      const token = generateToken(req.user); // Generate JWT token
+      const { user_id, profile_pic } = req.user;
+
+      res.json({
+        message: "Login successful",
+        token,
+        user: {
+          user_id,
+          profile_pic,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Server error" });
+    }
   }
 );
 
@@ -219,3 +261,11 @@ app.post(
     }
   }
 );
+
+app.get("/", (req, res) => {
+  res.status(200).json({ message: "The server is running" });
+});
+
+// If the routes do not work uncomment this
+// app.use('/posts', postRoutes);
+// app.use('/comments', commentRoutes);
