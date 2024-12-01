@@ -164,10 +164,14 @@ export default function Navbar() {
           className="btn btn-ghost btn-circle avatar translate-y-1"
         >
           <div className="w-16 rounded-full ">
+          // Fixed the source for the image
             {backendStatus.isBackendUp && backendStatus.isLoggedIn ? (
               <img
                 alt="User Avatar"
-                src={backendStatus.profilePic || "/noPfp.webp"}
+                src={ backendStatus.profilePic
+                  ? `data:image/png;base64,${backendStatus.profilePic}`  // Use the base64 string for the profile picture
+                  : "/noPfp.webp" // Fallback to the default image if no profile picture
+                }
                 referrerPolicy="no-referrer"
                 className="w-16 rounded-full"
               />
