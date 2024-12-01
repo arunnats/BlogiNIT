@@ -23,4 +23,41 @@ const getUserById = async (userId) => {
   return result.rows[0];
 };
 
-module.exports = { createUser, getUserByEmail, getUserById };
+const getUserPostCount = async () => {
+  const result = await pool.query(`
+    SELECT 
+      users.user_id, 
+      users.username, 
+      COUNT(posts.post_id) AS post_count
+    FROM users
+    LEFT JOIN posts ON users.user_id = posts.author_id
+    GROUP BY users.user_id, users.username
+    ORDER BY users.username ASC;
+  `);
+  return result.rows;
+};
+
+const getUserPostCountById = async (userId) => {
+  const result = await pool.query(
+    `
+    SELECT 
+      users.user_id, 
+      users.username, 
+      COUNT(posts.post_id) AS post_count
+    FROM users
+    LEFT JOIN posts ON users.user_id = posts.author_id
+    WHERE users.user_id = $1
+    GROUP BY users.user_id, users.username;
+  `,
+    [userId]
+  );
+  return result.rows[0];
+};
+
+module.exports = {
+  createUser,
+  getUserByEmail,
+  getUserById,
+  getUserPostCount,
+  getUserPostCountById,
+};

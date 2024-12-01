@@ -50,6 +50,7 @@ export default function Signup() {
                 title: post.title,
                 content: post.content,
                 timestamp: post.timestamp,
+                username: post.username,
               }}
             />
           ))}

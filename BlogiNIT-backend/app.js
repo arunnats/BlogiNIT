@@ -132,7 +132,7 @@ app.get("/profile-pic/:id", async (req, res) => {
 // All Posts Ordered by timestamps
 app.get(
   "/posts",
-  passport.authenticate("jwt", { session: false }),
+  // passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
       // getting all posts
@@ -145,7 +145,7 @@ app.get(
   }
 );
 
-//creating posts
+//creating posts  - FIX VALIDATIN
 app.post(
   "/profile/create-post",
   // passport.authenticate("jwt", { session: false }),
@@ -183,7 +183,7 @@ app.post(
 // all posts of a particular user
 app.get(
   "/posts/user/:userId",
-  passport.authenticate("jwt", { session: false }),
+  // passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     // Extract userId from the URL parameters
     const { userId } = req.params;
@@ -194,7 +194,7 @@ app.get(
 
       if (posts.length === 0) {
         return res
-          .status(404)
+          .status(201)
           .json({ message: "No posts found for this user." });
       }
 
@@ -207,7 +207,25 @@ app.get(
   }
 );
 
-// a posts content
+// user details
+app.get("/users/user-details/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const userWithPostCount = await userDb.getUserPostCountById(userId);
+
+    if (!userWithPostCount) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ user: userWithPostCount });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error fetching user details" });
+  }
+});
+
+// a posts content - FIX VALIDATIN
 app.get(
   "/posts/details",
   // passport.authenticate("jwt", { session: false }),

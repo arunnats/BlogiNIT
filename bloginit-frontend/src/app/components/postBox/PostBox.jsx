@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 
 const PostBox = ({ post }) => {
-  const { post_id, author_id, title, content, timestamp } = post;
+  const { post_id, author_id, title, content, timestamp, username } = post;
 
   return (
     <div className="flex flex-col items-center font-poppins text-[4vw] text-foreground bg-background border-4 border-black w-[80vw]">
@@ -21,7 +21,7 @@ const PostBox = ({ post }) => {
         </div>
         <div className="h-full flex items-center border-x-4 border-black px-4">
           <Link href={`./user/${author_id}`} className="text-[2vw]">
-            User {author_id}
+            {username}
           </Link>
         </div>
         <div className="h-full flex items-center">
