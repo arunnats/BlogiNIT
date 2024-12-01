@@ -1,5 +1,6 @@
 "use client";
-
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Navbar from "../components/navbar/Navbar";
 import Down from "../components/505/Down";
 import PostBox from "../components/postBox/PostBox";
@@ -7,18 +8,23 @@ import Link from "next/link";
 import { useBackendStatus } from "@/app/context/BackendStatusContext";
 
 export default function Signup() {
-  const backendContext = useBackendStatus();
+  const backendStatus = useBackendStatus();
+  const router = useRouter();
 
-  //console.log(backendContext.isBackendUp);
+  useEffect(() => {
+    if (!backendStatus.isLoggedIn) {
+      router.push("/login"); // Redirect to the login page
+    }
+  }, [backendStatus.isBackendUp, backendStatus.isLoggedIn, router]);
 
-  if (backendContext.isBackendUp === null) {
+  if (backendStatus.isBackendUp === null) {
     return <Down />;
   }
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      {backendContext.isBackendUp ? (
+      {backendStatus.isBackendUp && backendStatus.isLoggedIn ? (
         <main className="p-4 flex flex-row justify-center">
           <PostBox />
         </main>

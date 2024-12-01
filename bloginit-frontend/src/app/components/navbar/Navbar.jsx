@@ -1,15 +1,20 @@
 "use client"; // Required for client-side rendering with hooks
 
 import React, { useState, useRef, useEffect } from "react";
+import axios from "axios";
 import SearchBar from "../searchbar/SearchBar";
 import SearchResultsList from "../searchbar/SearchResultList";
 import Link from "next/link";
+import { useBackendStatus } from "@/app/context/BackendStatusContext";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const containerRef = useRef(null);
-  const user = useState(1);
+  const backendStatus = useBackendStatus();
+  const router = useRouter();
+  console.log(backendStatus);
 
   // Fetch search results
   //   const fetchSearchResults = async (term) => {
@@ -28,6 +33,34 @@ export default function Navbar() {
       fetchSearchResults(term);
     } else {
       setSearchResults([]);
+    }
+  };
+
+  // Handle logout
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("profilePic");
+
+    backendStatus.setIsLoggedIn(false);
+    backendStatus.setUserId(null);
+    backendStatus.setProfilePic(null);
+
+    router.push("/");
+  };
+
+  const fetchProfilePic = async () => {
+    if (backendStatus.isLoggedIn && backendStatus.userId) {
+      try {
+        const response = await axios.get(
+          `http://localhost:4000/profile-pic/${backendStatus.userId}`
+        );
+        const { profilePic } = response.data; // Extract Base64 string
+        backendStatus.setProfilePic(profilePic); // Store in state
+      } catch (error) {
+        console.error("Error fetching profile picture:", error);
+      }
     }
   };
 
@@ -77,43 +110,32 @@ export default function Navbar() {
           </div>
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+            className="menu menu-sm dropdown-content bg-base-background rounded-box z-[1] mt-3 w-52 translate-x-3 p-2 shadow"
           >
             <li>
-              <a href="#">Item 1</a>
+              <a href="/feed">Feed</a>
             </li>
             <li>
-              <a href="#">Parent</a>
-              <ul className="p-2">
-                <li>
-                  <a href="#">Submenu 1</a>
-                </li>
-                <li>
-                  <a href="#">Submenu 2</a>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <a href="#">Item 3</a>
+              <a href="/create">Create</a>
             </li>
           </ul>
         </div>
 
         <a
           className="border-r-2 h-full px-5 border-black text-3xl font-aloevera text-accent flex items-center"
-          href="#"
+          href="/"
         >
           <p className="translate-y-1">BlogiNIT</p>
         </a>
         <a
           className="border-r-2 h-full px-6 font-poppinsbold border-black text-2xl text-accent hidden lg:flex items-center"
-          href="#"
+          href="/feed"
         >
           Feed
         </a>
         <a
           className="border-r-2 h-full px-6 font-poppinsbold border-black text-2xl text-accent hidden lg:flex items-center"
-          href="#"
+          href="/create"
         >
           Create
         </a>
@@ -142,32 +164,45 @@ export default function Navbar() {
           className="btn btn-ghost btn-circle avatar translate-y-1"
         >
           <div className="w-16 rounded-full ">
-            <img
-              alt="User Avatar"
-              src="/defaultPfp.svg"
-              referrerPolicy="no-referrer"
-            />
+            {backendStatus.isBackendUp && backendStatus.isLoggedIn ? (
+              <img
+                alt="User Avatar"
+                src={backendStatus.profilePic || "/noPfp.webp"}
+                referrerPolicy="no-referrer"
+                className="w-16 rounded-full"
+              />
+            ) : (
+              <img
+                alt="Default Avatar"
+                src="/noPfp.webp"
+                referrerPolicy="no-referrer"
+                className="w-16 rounded-full"
+              />
+            )}
           </div>
         </div>
         <ul
           tabIndex={0}
           className="menu menu-sm dropdown-content mt-3 z-[1] p-2 -translate-x-3 shadow bg-accent rounded-box w-52"
         >
-          {user ? (
+          {backendStatus.isBackendUp && backendStatus.isLoggedIn ? (
             <>
               <li>
-                <Link className="text-foreground font-poppins" href="/profile">
-                  Profile
-                </Link>
-              </li>
-              <li>
-                <Link className="text-foreground font-poppins" href="/Library">
+                <Link
+                  className="text-foreground font-poppins"
+                  href={`/user/${backendStatus.userId}`}
+                >
                   Your Blog
                 </Link>
               </li>
+
               <li>
-                {/* <a className="text-primary font-poppins" onClick={handleLogout}> */}
-                <a className="text-foreground font-poppins">Logout</a>
+                <button
+                  className="text-foreground font-poppins"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </button>
               </li>
             </>
           ) : (

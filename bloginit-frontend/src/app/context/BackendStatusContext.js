@@ -6,9 +6,13 @@ const BackendStatusContext = createContext();
 
 export const BackendStatusProvider = ({ children }) => {
   const [isBackendUp, setIsBackendUp] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userId, setUserId] = useState(null);
-  const [profilePic, setProfilePic] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    JSON.parse(localStorage.getItem("isLoggedIn")) || false
+  );
+  const [userId, setUserId] = useState(localStorage.getItem("userId") || null);
+  const [profilePic, setProfilePic] = useState(
+    localStorage.getItem("profilePic") || null
+  );
 
   useEffect(() => {
     const checkBackendStatus = async () => {
@@ -22,6 +26,13 @@ export const BackendStatusProvider = ({ children }) => {
 
     checkBackendStatus();
   }, []);
+
+  // Save states to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("isLoggedIn", JSON.stringify(isLoggedIn));
+    localStorage.setItem("userId", userId || "");
+    localStorage.setItem("profilePic", profilePic || "");
+  }, [isLoggedIn, userId, profilePic]);
 
   return (
     <BackendStatusContext.Provider

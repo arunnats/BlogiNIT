@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import Link from "next/link";
 import { useBackendStatus } from "@/app/context/BackendStatusContext";
@@ -8,6 +9,8 @@ const LoginForm = () => {
   const [password, setPassword] = useState("");
   const { setIsLoggedIn, setUserId, setProfilePic } = useBackendStatus();
   const [error, setError] = useState("");
+  const router = useRouter();
+  const backendStatus = useBackendStatus();
 
   const handleLogin = async () => {
     try {
@@ -19,19 +22,27 @@ const LoginForm = () => {
       if (response.status === 200) {
         const { token, user } = response.data;
 
-        // Store the token in localStorage or cookies
+        // Store the token and user details in localStorage
         localStorage.setItem("authToken", token);
+        localStorage.setItem("isLoggedIn", JSON.stringify(true));
+        localStorage.setItem("userId", user.user_id);
+        localStorage.setItem("profilePic", user.profile_pic || "");
 
         // Update the context state
         setIsLoggedIn(true);
         setUserId(user.user_id);
         setProfilePic(user.profile_pic);
 
-        setError("");
-        alert("Logged in successfully!");
+        console.log("Logged in successfully!");
+
+        // Redirect to the user's profile page
+        if (backendStatus.isBackendUp) {
+          router.push(`/user/${user.user_id}`);
+        }
       }
     } catch (err) {
-      setError("Login failed. Please check your credentials.");
+      console.error(err);
+      alert("Login failed. Please check your credentials.");
     }
   };
 
@@ -61,7 +72,6 @@ const LoginForm = () => {
       <Link href="/signup" className="btn btn-foreground w-full max-w-xs">
         Create an account
       </Link>
-      {error && <p className="text-red-500 mt-2">{error}</p>}
     </div>
   );
 };

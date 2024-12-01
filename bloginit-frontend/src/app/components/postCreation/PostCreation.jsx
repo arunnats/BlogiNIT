@@ -40,19 +40,19 @@ const PostCreation = () => {
   };
 
   return (
-    <div className="flex flex-col items-center font-poppins text-[4vw] text-foreground my-[5vw]">
+    <div className="flex flex-col items-center font-poppins text-[4vw] w-[70vw] text-foreground my-[5vw]">
       <h2 className="text-[3vw] mb-[1vw]">Create A Post</h2>
       <input
         type="text"
         placeholder="Title"
-        className="input input-bordered w-full max-w-xs my-2 bg-accent"
+        className="input input-bordered w-full  my-2 bg-accent"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
       <textarea
         type="content"
         placeholder="Type your post here!"
-        className="textarea textarea-bordered w-full max-w-xs my-2 bg-accent"
+        className="textarea textarea-bordered w-full  h-64 my-2 bg-accent"
         value={content}
         onChange={(e) => setContent(e.target.value)}
       />

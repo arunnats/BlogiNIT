@@ -1,5 +1,6 @@
 "use client";
-
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Navbar from "@/app/components/navbar/Navbar";
 import Down from "@/app/components/505/Down";
 import PostBox from "@/app/components/postBox/PostBoxUserPage";
@@ -10,16 +11,19 @@ import { use } from "react";
 export default function Feed({ params }) {
   const resolvedParams = use(params);
   const userid = resolvedParams.user_id;
+  const router = useRouter();
+  const backendStatus = useBackendStatus();
 
-  const isBackendUp = useBackendStatus();
-
-  console.log("User ID:", userid);
-  console.log("Backend Status:", isBackendUp);
+  useEffect(() => {
+    if (!backendStatus.isLoggedIn) {
+      router.push("/login"); // Redirect to the login page
+    }
+  }, [backendStatus.isBackendUp, backendStatus.isLoggedIn, router]);
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      {isBackendUp ? (
+      {backendStatus.isBackendUp && backendStatus.isLoggedIn ? (
         <main className="p-4 flex flex-col justify-center items-center gap-4">
           <UserDesc />
           <PostBox />

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import Link from "next/link";
+import { useBackendStatus } from "@/app/context/BackendStatusContext";
 
 const ProfileCreation = () => {
   const [username, setUsername] = useState("");
@@ -8,8 +10,8 @@ const ProfileCreation = () => {
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const [profilePic, setProfilePic] = useState(null);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const backendStatus = useBackendStatus();
+  const router = useRouter();
 
   const handleProfilePicChange = (e) => {
     setProfilePic(e.target.files[0]);
@@ -17,7 +19,7 @@ const ProfileCreation = () => {
 
   const handleSignup = async () => {
     if (password !== repeatPassword) {
-      setError("Passwords do not match.");
+      alert("Passwords do not match.");
       return;
     }
 
@@ -39,11 +41,22 @@ const ProfileCreation = () => {
       );
 
       if (response.status === 201) {
-        setSuccess("Signup successful!");
-        setError(""); // Clear any previous errors
+        console.log("Signup successful!");
+        const { token, user } = response.data;
+
+        // Store the token and user details in localStorage
+        localStorage.setItem("authToken", token);
+
+        // Update the context state
+        backendStatus.setIsLoggedIn(true);
+        backendStatus.setUserId(user.user_id);
+        backendStatus.setProfilePic(user.profile_pic);
+
+        router.push(`/user/${user.user_id}`);
       }
     } catch (err) {
-      setError("Signup failed. Please check your information.");
+      console.error(err);
+      alert("Signup failed. Please check your information.");
     }
   };
 
@@ -92,8 +105,6 @@ const ProfileCreation = () => {
       <Link href="/login" className="btn btn-foreground w-full max-w-xs">
         Log In
       </Link>
-      {error && <p className="text-red-500 mt-2">{error}</p>}
-      {success && <p className="text-green-500 mt-2">{success}</p>}
     </div>
   );
 };

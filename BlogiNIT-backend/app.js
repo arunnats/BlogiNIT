@@ -14,7 +14,16 @@ const multer = require("multer");
 
 // Configure multer for in-memory storage
 const storage = multer.memoryStorage();
-const upload = multer({ storage });
+const upload = multer({
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === "image/png") {
+      cb(null, true);
+    } else {
+      cb(new Error("Only PNG files are allowed"));
+    }
+  },
+});
 const PORT = 4000;
 
 app.use(express.json());
@@ -55,27 +64,22 @@ app.post("/register", upload.single("profile_pic"), async (req, res) => {
       hashedPassword,
       profilePic
     );
-    const token = generateToken(newUser);
+
+    const token = generateToken(newUser); // Generate JWT token
+    const { user_id, profile_pic } = newUser; // Destructure user details
+
     console.log("User created successfully");
-    res.status(201).json({ message: "User created successfully", token });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
-  }
-});
 
-// Route to fetch user profile picture
-app.get("/profile-pic/:id", async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const user = await userDb.getUserById(id);
-    if (!user || !user.profile_pic) {
-      return res.status(404).json({ message: "Profile picture not found" });
-    }
-
-    res.set("Content-Type", "image/png"); // Adjust if you use another format
-    res.send(user.profile_pic);
+    return res.status(201).json({
+      message: "User created successfully",
+      token,
+      user: {
+        user_id,
+        username: newUser.username,
+        email: newUser.email,
+        profile_pic,
+      },
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
@@ -105,6 +109,25 @@ app.post(
     }
   }
 );
+
+// Route to fetch user profile picture
+app.get("/profile-pic/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await userDb.getUserById(id);
+    if (!user || !user.profile_pic) {
+      return res.status(404).json({ message: "Profile picture not found" });
+    }
+
+    // Convert the `bytea` data to base64
+    const base64Image = Buffer.from(user.profile_pic).toString("base64");
+    res.json({ profilePic: base64Image });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 // All Posts Ordered by timestamps
 app.get(

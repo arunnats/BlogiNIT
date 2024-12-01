@@ -22,14 +22,14 @@ export default function Home() {
             <Link
               className="btn bg-accent border-0 px-20 text-foreground font-poppinsbold text-lg 
                hover:bg-foreground hover:text-background"
-              href="/profile"
+              href="/feed"
             >
               Visit the feed!
             </Link>
             <Link
               className="btn bg-accent border-0 px-20 text-foreground font-poppinsbold text-lg 
 hover:bg-foreground hover:text-background"
-              href="/profile"
+              href="/create"
             >
               Make a post!
             </Link>
