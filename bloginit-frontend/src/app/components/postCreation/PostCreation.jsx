@@ -1,41 +1,41 @@
 import React, { useState } from "react";
 import axios from "axios";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useBackendStatus } from "@/app/context/BackendStatusContext";
 
 const PostCreation = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [contentPic, setContentPic] = useState(null);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-
-  const handleContentPicChange = (e) => {
-    setContentPic(e.target.files[0]);
-  };
+  const backendStatus = useBackendStatus();
+  const authorId = backendStatus.userId;
+  const router = useRouter();
 
   const handlePostCreation = async () => {
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("content", content);
-    formData.append("contentPic", contentPic);
+    console.log(backendStatus.authToken);
+    if (!backendStatus.authToken) {
+      alert("You need to log in to create a post.");
+      return;
+    }
 
     try {
       const response = await axios.post(
-        "https://your-backend-url.com/endpoint",
-        formData,
+        "http://localhost:4000/profile/create-post",
+        { title, content, authorId },
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${backendStatus.authToken}`,
           },
         }
       );
 
       if (response.status === 201) {
-        setSuccess("Signup successful!");
-        setError(""); // Clear any previous errors
+        console.log("Created post successfully!", response.data);
+        router.push(`/feed/${response.data.post.post_id}`);
       }
     } catch (err) {
-      setError("Signup failed. Please check your information.");
+      console.error(err);
+      alert("Failed to create post. Please try again later.");
     }
   };
 
@@ -50,9 +50,8 @@ const PostCreation = () => {
         onChange={(e) => setTitle(e.target.value)}
       />
       <textarea
-        type="content"
         placeholder="Type your post here!"
-        className="textarea textarea-bordered w-full  h-64 my-2 bg-accent"
+        className="textarea textarea-bordered w-full h-64 my-2 bg-accent"
         value={content}
         onChange={(e) => setContent(e.target.value)}
       />
@@ -62,9 +61,6 @@ const PostCreation = () => {
       >
         Post!
       </button>
-
-      {error && <p className="text-red-500 mt-2">{error}</p>}
-      {success && <p className="text-green-500 mt-2">{success}</p>}
     </div>
   );
 };

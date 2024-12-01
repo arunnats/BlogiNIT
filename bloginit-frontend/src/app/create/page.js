@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import Navbar from "../components/navbar/Navbar";
 import Down from "../components/505/Down";
 import PostCreation from "../components/postCreation/PostCreation";
-import Link from "next/link";
 import { useBackendStatus } from "@/app/context/BackendStatusContext";
 
 export default function Signup() {

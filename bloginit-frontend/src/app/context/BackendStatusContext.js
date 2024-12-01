@@ -10,6 +10,9 @@ export const BackendStatusProvider = ({ children }) => {
     JSON.parse(localStorage.getItem("isLoggedIn")) || false
   );
   const [userId, setUserId] = useState(localStorage.getItem("userId") || null);
+  const [authToken, setAuthToken] = useState(
+    localStorage.getItem("authToken") || null
+  );
   const [profilePic, setProfilePic] = useState(
     localStorage.getItem("profilePic") || null
   );
@@ -31,6 +34,7 @@ export const BackendStatusProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem("isLoggedIn", JSON.stringify(isLoggedIn));
     localStorage.setItem("userId", userId || "");
+    localStorage.setItem("authToken", authToken || "");
     localStorage.setItem("profilePic", profilePic || "");
   }, [isLoggedIn, userId, profilePic]);
 
@@ -44,6 +48,7 @@ export const BackendStatusProvider = ({ children }) => {
         setUserId,
         profilePic,
         setProfilePic,
+        authToken,
       }}
     >
       {children}

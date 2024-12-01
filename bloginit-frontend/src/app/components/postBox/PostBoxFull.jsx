@@ -1,28 +1,7 @@
-import React, { useState } from "react";
-import Link from "next/link";
+import React, { useEffect, useState } from "react";
 
-const PostBox = (post_id) => {
-  const [author_id, setAuthor_id] = useState("");
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [numComments, setNumComments] = useState("");
-  const [timestamp, setTimestamp] = useState("");
-
-  const getPostDetails = async () => {
-    try {
-      const response = await axios.post(
-        "https://your-backend-url.com/postIDKAFAGFW",
-        {
-          post_id,
-        }
-      );
-
-      if (response.status === 200) {
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
+const PostBox = ({ post }) => {
+  const { post_id, author_id, title, content, timestamp } = post;
 
   return (
     <div className="flex flex-col items-center font-poppins text-[4vw] text-foreground bg-background border-4 border-black w-[80vw]">
@@ -40,28 +19,14 @@ const PostBox = (post_id) => {
           />
         </div>
         <div className="h-full flex items-center border-x-4  border-black px-4">
-          <h3 className="text-[2vw] ">Username</h3>
+          <h3 className="text-[2vw] ">User {author_id}</h3>
         </div>
         <div className="h-full flex items-center">
-          <h3 className="text-[2vw] ml-4">Title</h3>
+          <h3 className="text-[2vw] ml-4">{title}</h3>
         </div>
       </div>
       <div className="text-[1.5vw] w-full border-y-4 border-black overflow-hidden text-ellipsis p-4 text-justify">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis tenetur
-        laboriosam, minus eos libero atque maiores repudiandae exercitationem
-        voluptas laudantium sunt. Itaque tempora accusantium reprehenderit
-        voluptatum quasi provident optio vel. Lorem ipsum dolor sit amet
-        consectetur adipisicing elit. Quis tenetur laboriosam, minus eos libero
-        atque maiores repudiandae exercitationem voluptas laudantium sunt.
-        Itaque tempora accusantium reprehenderit voluptatum quasi provident
-        optio vel. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis
-        tenetur laboriosam, minus eos libero atque maiores repudiandae
-        exercitationem voluptas laudantium sunt. Itaque tempora accusantium
-        reprehenderit voluptatum quasi provident optio vel. Lorem ipsum dolor
-        sit amet consectetur adipisicing elit. Quis tenetur laboriosam, minus
-        eos libero atque maiores repudiandae exercitationem voluptas laudantium
-        sunt. Itaque tempora accusantium reprehenderit voluptatum quasi
-        provident optio vel.
+        {content}
       </div>
 
       <div className="w-full h-[4vw] flex flex-row justify-between">
@@ -69,7 +34,7 @@ const PostBox = (post_id) => {
           <h3 className="text-[2vw] ">Comments : 1</h3>
         </div>
         <div className="h-full flex items-center border-l-4 border-black px-4">
-          <h3 className="text-[2vw]">09-11-24</h3>
+          <h3 className="text-[2vw]">{new Date(timestamp).toLocaleString()}</h3>
         </div>
       </div>
     </div>

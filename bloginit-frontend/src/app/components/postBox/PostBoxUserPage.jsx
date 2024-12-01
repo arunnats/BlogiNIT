@@ -1,28 +1,8 @@
 import React, { useState } from "react";
 import Link from "next/link";
 
-const PostBox = (post_id) => {
-  const [author_id, setAuthor_id] = useState("");
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [numComments, setNumComments] = useState("");
-  const [timestamp, setTimestamp] = useState("");
-
-  const getPostDetails = async () => {
-    try {
-      const response = await axios.post(
-        "https://your-backend-url.com/postIDKAFAGFW",
-        {
-          post_id,
-        }
-      );
-
-      if (response.status === 200) {
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
+const PostBox = ({ post }) => {
+  const { post_id, author_id, title, content, timestamp } = post;
 
   return (
     <div className="flex flex-col items-center font-poppins text-[4vw] text-foreground bg-background border-4 border-black w-[80vw]">

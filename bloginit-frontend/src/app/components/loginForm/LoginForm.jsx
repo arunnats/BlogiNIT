@@ -8,7 +8,6 @@ const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { setIsLoggedIn, setUserId, setProfilePic } = useBackendStatus();
-  const [error, setError] = useState("");
   const router = useRouter();
   const backendStatus = useBackendStatus();
 
@@ -31,6 +30,7 @@ const LoginForm = () => {
         // Update the context state
         setIsLoggedIn(true);
         setUserId(user.user_id);
+        setAuthToken(user.token);
         setProfilePic(user.profile_pic);
 
         console.log("Logged in successfully!");
