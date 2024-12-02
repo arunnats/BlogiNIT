@@ -13,7 +13,6 @@ const { generateToken } = require("./config/passport");
 const multer = require("multer");
 
 // Configure multer for in-memory storage
-const storage = multer.memoryStorage();
 const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
@@ -94,13 +93,27 @@ app.post(
     try {
       const token = generateToken(req.user); // Generate JWT token
       const { user_id, profile_pic } = req.user;
+      // Convert profile_pic Buffer to Base64 string
+      const profilePicBase64 = profile_pic
+        ? profile_pic.toString("base64")
+        : null;
+
+      console.log("logged in");
+      console.log({
+        message: "Login successful",
+        token,
+        user: {
+          user_id,
+          profile_pic: profilePicBase64,
+        },
+      });
 
       res.json({
         message: "Login successful",
         token,
         user: {
           user_id,
-          profile_pic,
+          profile_pic: profilePicBase64,
         },
       });
     } catch (error) {
@@ -120,9 +133,11 @@ app.get("/profile-pic/:id", async (req, res) => {
       return res.status(404).json({ message: "Profile picture not found" });
     }
 
-    // Convert the `bytea` data to base64
-    const base64Image = Buffer.from(user.profile_pic).toString("base64");
-    res.json({ profilePic: base64Image });
+    const profilePicBase64 = user.profile_pic
+      ? user.profile_pic.toString("base64")
+      : null;
+
+    res.json({ profilePic: profilePicBase64 });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });

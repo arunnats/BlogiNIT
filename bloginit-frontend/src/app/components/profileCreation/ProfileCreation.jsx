@@ -46,11 +46,15 @@ const ProfileCreation = () => {
 
         // Store the token and user details in localStorage
         localStorage.setItem("authToken", token);
+        localStorage.setItem("isLoggedIn", JSON.stringify(true));
+        localStorage.setItem("userId", user.user_id);
+        localStorage.setItem("profilePic", user.profile_pic || "");
 
         // Update the context state
-        backendStatus.setIsLoggedIn(true);
-        backendStatus.setUserId(user.user_id);
-        backendStatus.setProfilePic(user.profile_pic);
+        setIsLoggedIn(true);
+        setUserId(user.user_id);
+        setAuthToken(token);
+        setProfilePic(user.profile_pic);
 
         router.push(`/user/${user.user_id}`);
       }

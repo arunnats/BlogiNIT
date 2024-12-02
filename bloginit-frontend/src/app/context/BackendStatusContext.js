@@ -49,6 +49,7 @@ export const BackendStatusProvider = ({ children }) => {
         profilePic,
         setProfilePic,
         authToken,
+        setAuthToken,
       }}
     >
       {children}

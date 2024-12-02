@@ -7,9 +7,9 @@ import { useBackendStatus } from "@/app/context/BackendStatusContext";
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { setIsLoggedIn, setUserId, setProfilePic } = useBackendStatus();
+  const { setIsLoggedIn, setUserId, setProfilePic, setAuthToken } =
+    useBackendStatus();
   const router = useRouter();
-  const backendStatus = useBackendStatus();
 
   const handleLogin = async () => {
     try {
@@ -20,6 +20,8 @@ const LoginForm = () => {
 
       if (response.status === 200) {
         const { token, user } = response.data;
+        console.log(response);
+        console.log(token);
 
         // Store the token and user details in localStorage
         localStorage.setItem("authToken", token);
@@ -30,7 +32,7 @@ const LoginForm = () => {
         // Update the context state
         setIsLoggedIn(true);
         setUserId(user.user_id);
-        setAuthToken(user.token);
+        setAuthToken(token);
         setProfilePic(user.profile_pic);
 
         console.log("Logged in successfully!");

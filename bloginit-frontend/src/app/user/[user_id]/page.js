@@ -7,6 +7,7 @@ import PostBox from "@/app/components/postBox/PostBoxUserPage";
 import UserDesc from "@/app/components/userBlock/userDesc";
 import { useBackendStatus } from "@/app/context/BackendStatusContext";
 import { use } from "react";
+import Link from "next/link";
 import axios from "axios";
 
 export default function Feed({ params }) {
@@ -58,6 +59,22 @@ export default function Feed({ params }) {
       {backendStatus.isBackendUp && backendStatus.isLoggedIn ? (
         <main className="p-4 flex flex-col justify-center items-center gap-4">
           <UserDesc userDetails={userDetails} />
+          <div className="flex flex-row gap-4">
+            <Link
+              className="btn bg-accent border-0 px-20 text-foreground font-poppinsbold text-lg 
+               hover:bg-foreground hover:text-background"
+              href="/feed"
+            >
+              Visit the feed!
+            </Link>
+            <Link
+              className="btn bg-accent border-0 px-20 text-foreground font-poppinsbold text-lg 
+hover:bg-foreground hover:text-background"
+              href="/create"
+            >
+              Make a post!
+            </Link>
+          </div>
           {posts.map((post) => (
             <PostBox
               key={post.post_id}
