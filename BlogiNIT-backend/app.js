@@ -354,6 +354,21 @@ app.post(
   }
 );
 
+
+// Route to get the count of comments for a specific post
+app.get('/posts/:postId/comments/count', async (req, res) => {
+  const { postId } = req.params;
+
+  try {
+      const commentCount = await commentDb.getCommentCountByPostId(postId);
+      res.status(200).json({ postId, commentCount });
+  } catch (error) {
+      console.error("Error fetching comment count:", error);
+      res.status(500).json({ error: "Failed to fetch comment count" });
+  }
+});
+
+
 // Search the users by username
 app.get("/users/search", async (req, res) => {
   const { query } = req.query;
