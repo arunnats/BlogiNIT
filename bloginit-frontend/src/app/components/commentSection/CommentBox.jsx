@@ -15,8 +15,6 @@ const CommentBox = ({ comment }) => {
       .get(`http://localhost:4000/users/user-details/${author_id}`, {})
       .then((response) => {
         if (response.status === 200) {
-          console.log("User Details:", response.data.user);
-
           setUserDetails(response.data.user);
         }
       })
@@ -31,7 +29,6 @@ const CommentBox = ({ comment }) => {
         );
         if (response.ok) {
           const data = await response.json();
-          console.log(data);
 
           if (data.profilePic) {
             setProfilePic(`data:image/png;base64,${data.profilePic}`);

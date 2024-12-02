@@ -1,22 +1,33 @@
 import React, { useState } from "react";
-import Link from "next/link";
+import { useBackendStatus } from "@/app/context/BackendStatusContext";
+import axios from "axios";
 
-const CommentCreate = (post_id) => {
+const CommentCreate = ({ postId }) => {
   const [content, setContent] = useState("");
+  const backendStatus = useBackendStatus();
+  const authorId = backendStatus.userId;
+
+  // console.log(postId);
 
   const createComment = async () => {
     try {
       const response = await axios.post(
-        "https://your-backend-url.com/postIDKAFAGFW",
+        `http://localhost:4000/post/${postId}/comments`,
         {
-          comment_id,
+          content,
+          userId: authorId,
         }
       );
 
-      if (response.status === 200) {
+      if (response.status === 201) {
+        // console.log("Comment created successfully:", response.data.newComment);
+        setContent("");
+        window.location.reload(); // Reload the entire page
+      } else {
+        // console.log("Unexpected response:", response);
       }
     } catch (err) {
-      console.log(err);
+      console.error("Error creating comment:", err);
     }
   };
 

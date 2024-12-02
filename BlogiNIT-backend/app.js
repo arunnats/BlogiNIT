@@ -333,8 +333,8 @@ app.post(
   // passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     const { postId } = req.params;
-    const { content } = req.body;
-    const userId = req.user.user_id;
+    const { content, userId } = req.body;
+    console.log("yooo i start");
 
     if (!content) {
       return res.status(400).json({ message: "Comment content is required." });
@@ -343,7 +343,7 @@ app.post(
     try {
       const newComment = await commentDb.createComment(postId, userId, content);
 
-      // Respond with the newly added comment
+      console.log("comment done");
       res
         .status(201)
         .json({ message: "Comment added successfully", newComment });

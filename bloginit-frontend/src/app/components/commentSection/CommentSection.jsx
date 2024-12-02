@@ -13,7 +13,7 @@ const CommentSection = ({ postId }) => {
       .get(`http://localhost:4000/post/${postId}/comments`)
       .then((response) => {
         if (response.status === 200) {
-          console.log("Comments fetched successfully:", response.data.comments);
+          // console.log("Comments fetched successfully:", response.data.comments);
           setComments(response.data.comments); // Assuming the API sends comments in `data.comments`
         }
       })
@@ -22,7 +22,7 @@ const CommentSection = ({ postId }) => {
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <CommentCreate />
+      <CommentCreate postId={postId} />
 
       {comments.map((comment) => (
         <CommentBox
