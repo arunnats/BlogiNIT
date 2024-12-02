@@ -37,12 +37,21 @@ hover:bg-foreground hover:text-background"
         </div>
         <div className="w-[40%] flex flex-col">
           <p className="font-poppins text-[1.5vw] text-foreground text-justify p-10 pb-3 -translate-x-4 translate-y-7">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            BlogiNIT is the perfect way to make your thoughts public and share
+            them with the world. Create posts, comment on them and let your
+            thoughts run free
           </p>
-          <p className="font-poppins text-[1.5vw] text-foreground text-justify p-10 pt-3 -translate-x-4 translate-y-7">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          <p className="font-poppins text-[1.5vw] text-foreground text-justify p-10 py-3 -translate-x-4 translate-y-7">
+            Created as as part of the S5 DBMS course at NIT Calicut by:
+          </p>
+          <p className="font-poppins text-[1.5vw] text-foreground text-justify p-10 py-0 -translate-x-4 translate-y-7">
+            Arun Natarajan
+          </p>
+          <p className="font-poppins text-[1.5vw] text-foreground text-justify p-10 py-0 -translate-x-4 translate-y-7">
+            Hafeez Muhammed{" "}
+          </p>
+          <p className="font-poppins text-[1.5vw] text-foreground text-justify p-10 py-0 -translate-x-4 translate-y-7">
+            Kamble Aditya Dattatray
           </p>
         </div>
       </main>
