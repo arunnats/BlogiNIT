@@ -4,6 +4,7 @@ import Link from "next/link";
 const PostBox = ({ post }) => {
   const { post_id, author_id, title, content, timestamp, username } = post;
   const [profilePic, setProfilePic] = useState("/noPfp.webp");
+  const [commentCount, setCommentCount] = useState(0);
 
   useEffect(() => {
     const fetchProfilePic = async () => {
@@ -27,6 +28,25 @@ const PostBox = ({ post }) => {
 
     fetchProfilePic();
   }, [author_id]);
+
+  useEffect(() => {
+    const fetchCommentCount = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:4000/posts/${post_id}/comments/count`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setCommentCount(data.commentCount);
+        }
+      } catch (error) {
+        setProfilePic(`/noPfp.webp`);
+        console.error("Failed to fetch profile picture:", error);
+      }
+    };
+
+    fetchCommentCount();
+  }, [post_id]);
 
   return (
     <div className="flex flex-col items-center font-poppins text-[4vw] text-foreground bg-background border-4 border-black w-[80vw]">
@@ -53,7 +73,7 @@ const PostBox = ({ post }) => {
 
       <div className="w-full h-[4vw] flex flex-row justify-between">
         <div className="h-full flex items-center border-r-4 border-black px-4">
-          <h3 className="text-[2vw] ">Comments : 1</h3>
+          <h3 className="text-[2vw] "> Comments: {commentCount}</h3>
         </div>
         <div className="h-full flex items-center border-l-4 border-black px-4">
           <h3 className="text-[2vw]">09-11-24</h3>
