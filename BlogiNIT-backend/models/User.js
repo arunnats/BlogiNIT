@@ -54,10 +54,40 @@ const getUserPostCountById = async (userId) => {
   return result.rows[0];
 };
 
+// search users by username
+const searchUser = async (searchQuery) => {
+  const query = `
+    SELECT 
+      user_id,
+      username,
+      email,
+      profile_pic
+    FROM users
+    WHERE 
+      LOWER(username) LIKE LOWER($1)
+    ORDER BY username ASC
+  `;
+  
+  const searchPattern = `%${searchQuery}%`;
+  
+  try {
+    const result = await pool.query(query, [searchPattern]);
+    const users = result.rows.map(user => ({
+      ...user,
+      profile_pic: user.profile_pic ? user.profile_pic.toString('base64') : null
+    }));
+    return users;
+  } catch (error) {
+    console.error('Database search error:', error);
+    throw error;
+  }
+};
+
 module.exports = {
   createUser,
   getUserByEmail,
   getUserById,
   getUserPostCount,
   getUserPostCountById,
+  searchUser
 };

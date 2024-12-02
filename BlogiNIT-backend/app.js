@@ -354,6 +354,23 @@ app.post(
   }
 );
 
+// Search the users by username
+app.get("/users/search", async (req, res) => {
+  const { query } = req.query;
+  
+  if (!query) {
+    return res.status(400).json({ message: "Search query is required" });
+  }
+
+  try {
+    const searchResults = await userDb.searchUsers(query);
+    res.status(200).json({ results: searchResults });
+  } catch (error) {
+    console.error("Search error:", error);
+    res.status(500).json({ message: "Error performing search" });
+  }
+});
+
 app.get("/", (req, res) => {
   res.status(200).json({ message: "The server is running" });
 });
