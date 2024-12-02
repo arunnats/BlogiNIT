@@ -1,28 +1,33 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
+import axios from "axios";
 
 const SearchBar = ({ setResults, searchTerm, setSearchTerm }) => {
-  const sampleData = [
-    { "Book-Title": "JavaScript Essentials" },
-    { "Book-Title": "Learning React" },
-    { "Book-Title": "Advanced CSS Techniques" },
-    { "Book-Title": "Python for Data Science" },
-    { "Book-Title": "FastAPI Fundamentals" },
-  ];
-
-  const fetchData = (value) => {
-    const filteredData = sampleData.filter((item) =>
-      item["Book-Title"].toLowerCase().includes(value.toLowerCase())
-    );
-    setResults(filteredData);
+  const debounce = (func, delay) => {
+    let timer;
+    return (...args) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => func(...args), delay);
+    };
   };
+
+  const fetchResults = useRef(
+    debounce(async (value) => {
+      try {
+        const response = await axios.get(
+          `http://localhost:4000/users/search?query=${value}`
+        );
+        setResults(response.data.results); // Update results based on response
+      } catch (error) {}
+    }, 300)
+  ).current;
 
   const handleChange = (value) => {
     setSearchTerm(value);
-    if (value === "") {
+    if (value.trim() === "") {
       setResults([]);
     } else {
-      fetchData(value);
+      fetchResults(value);
     }
   };
 

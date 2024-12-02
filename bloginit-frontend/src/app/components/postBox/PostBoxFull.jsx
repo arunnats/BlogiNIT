@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 const PostBox = ({ post }) => {
   const { post_id, author_id, title, content, timestamp } = post;
   const [profilePic, setProfilePic] = useState("/noPfp.webp");
+  const [userData, setUserData] = useState("");
 
   useEffect(() => {
     const fetchProfilePic = async () => {
@@ -27,6 +28,29 @@ const PostBox = ({ post }) => {
     fetchProfilePic();
   }, [author_id]);
 
+  useEffect(() => {
+    const fetchAuthorDetails = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:4000/users/user-details/${author_id}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+
+          console.log(data.user.username);
+
+          if (data) {
+            setUserData(data.user.username);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch details:", error);
+      }
+    };
+
+    fetchAuthorDetails();
+  }, [author_id]);
+
   return (
     <div className="flex flex-col items-center font-poppins text-[4vw] text-foreground bg-background border-4 border-black w-[80vw]">
       <div className="w-full h-[4.5vw] flex flex-row">
@@ -43,7 +67,7 @@ const PostBox = ({ post }) => {
           />
         </div>
         <div className="h-full flex items-center border-x-4  border-black px-4">
-          <h3 className="text-[2vw] ">User {author_id}</h3>
+          <h3 className="text-[2vw] ">{userData}</h3>
         </div>
         <div className="h-full flex items-center">
           <h3 className="text-[2vw] ml-4">{title}</h3>

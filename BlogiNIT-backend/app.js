@@ -304,7 +304,7 @@ app.post(
 // GET get comments for a specific post
 app.get(
   "/post/:postId/comments",
-  passport.authenticate("jwt", { session: false }),
+  // passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     const { postId } = req.params;
 
@@ -314,7 +314,7 @@ app.get(
 
       if (comments.length === 0) {
         return res
-          .status(404)
+          .status(203)
           .json({ message: "No comments found for this post." });
       }
 
@@ -330,7 +330,7 @@ app.get(
 // Creating comments comment to a post
 app.post(
   "/post/:postId/comments",
-  passport.authenticate("jwt", { session: false }),
+  // passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     const { postId } = req.params;
     const { content } = req.body;
@@ -357,7 +357,7 @@ app.post(
 // Search the users by username
 app.get("/users/search", async (req, res) => {
   const { query } = req.query;
-  
+
   if (!query) {
     return res.status(400).json({ message: "Search query is required" });
   }
@@ -366,8 +366,7 @@ app.get("/users/search", async (req, res) => {
     const searchResults = await userDb.searchUsers(query);
     res.status(200).json({ results: searchResults });
   } catch (error) {
-    console.error("Search error:", error);
-    res.status(500).json({ message: "Error performing search" });
+    res.status(203).json({ results: null });
   }
 });
 

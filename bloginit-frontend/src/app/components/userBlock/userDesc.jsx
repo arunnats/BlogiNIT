@@ -27,6 +27,7 @@ const UserDesc = (userDetails) => {
 
     fetchProfilePic();
   }, [author_id]);
+
   return (
     <div className="flex flex-col items-center font-poppins text-[4vw] text-foreground bg-background border-4 border-black w-[80vw]">
       <div className="w-full h-[6.5vw] flex flex-row justify-between">

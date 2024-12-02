@@ -27,7 +27,6 @@ export default function Feed({ params }) {
         })
         .then((response) => {
           if (response.status === 200) {
-            console.log(response.data);
             setPostDetails(response.data);
           }
         })
@@ -49,7 +48,7 @@ export default function Feed({ params }) {
               timestamp: postDetails.timestamp,
             }}
           />
-          <CommentSection />
+          <CommentSection postId={postDetails.post_id} />
         </main>
       ) : (
         <div>

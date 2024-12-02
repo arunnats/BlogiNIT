@@ -66,19 +66,22 @@ const searchUsers = async (searchQuery) => {
     WHERE 
       LOWER(username) LIKE LOWER($1)
     ORDER BY username ASC
+    LIMIT 5
   `;
-  
+
   const searchPattern = `%${searchQuery}%`;
-  
+
   try {
     const result = await pool.query(query, [searchPattern]);
-    const users = result.rows.map(user => ({
+    const users = result.rows.map((user) => ({
       ...user,
-      profile_pic: user.profile_pic ? user.profile_pic.toString('base64') : null
+      profile_pic: user.profile_pic
+        ? user.profile_pic.toString("base64")
+        : null,
     }));
     return users;
   } catch (error) {
-    console.error('Database search error:', error);
+    console.error("Database search error:", error);
     throw error;
   }
 };
@@ -89,5 +92,5 @@ module.exports = {
   getUserById,
   getUserPostCount,
   getUserPostCountById,
-  searchUsers
+  searchUsers,
 };

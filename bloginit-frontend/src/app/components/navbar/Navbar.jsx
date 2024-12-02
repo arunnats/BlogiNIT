@@ -17,14 +17,16 @@ export default function Navbar() {
   // console.log(backendStatus);
 
   // Fetch search results
-  //   const fetchSearchResults = async (term) => {
-  //     try {
-  //       const response = await axios.get(`${fastAPIURL}search/?query=${term}`);
-  //       setSearchResults(response.data);
-  //     } catch (error) {
-  //       console.error("Error fetching search results:", error);
-  //     }
-  //   };
+  const fetchSearchResults = async (term) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:4000/search/?query=${term}`
+      );
+      setSearchResults(response.data);
+    } catch (error) {
+      // console.error("Error fetching search results:", error);
+    }
+  };
 
   // Handle search term changes
   const handleSearchChange = (term) => {
@@ -66,9 +68,10 @@ export default function Navbar() {
 
   // Handle clicking a result
   const handleResultClick = (result) => {
-    console.log("Selected:", result); // Log or perform any action with the selected result
-    setSearchTerm(""); // Clear the search term
-    setSearchResults([]); // Clear the search results
+    console.log("Selected user:", result);
+    setSearchTerm(""); // Clear search term
+    setSearchResults([]); // Clear displayed results
+    router.push(`/user/${result.user_id}`); // Navigate to the user's profile page
   };
 
   // Handle outside clicks to close search results
