@@ -55,7 +55,7 @@ const getUserPostCountById = async (userId) => {
 };
 
 // search users by username
-const searchUser = async (searchQuery) => {
+const searchUsers = async (searchQuery) => {
   const query = `
     SELECT 
       user_id,
@@ -89,5 +89,5 @@ module.exports = {
   getUserById,
   getUserPostCount,
   getUserPostCountById,
-  searchUser
+  searchUsers
 };
