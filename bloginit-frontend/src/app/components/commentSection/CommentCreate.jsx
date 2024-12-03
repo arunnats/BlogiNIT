@@ -7,27 +7,54 @@ const CommentCreate = ({ postId }) => {
   const backendStatus = useBackendStatus();
   const authorId = backendStatus.userId;
 
-  // console.log(postId);
+  // Helper function to sanitize user input
+  const sanitizeInput = (input) => {
+    return input.replace(/[<>;]/g, ""); // Remove potentially harmful characters
+  };
 
   const createComment = async () => {
+    if (!backendStatus.authToken) {
+      alert("You need to log in to leave a comment.");
+      return;
+    }
+
+    // Sanitize user input
+    const sanitizedContent = sanitizeInput(content);
+
+    if (!sanitizedContent.trim()) {
+      alert("Comment content cannot be empty.");
+      return;
+    }
+
+    if (sanitizedContent.length > 500) {
+      alert("Comment is too long. Please keep it under 500 characters.");
+      return;
+    }
+
     try {
       const response = await axios.post(
         `http://localhost:4000/post/${postId}/comments`,
         {
-          content,
+          content: sanitizedContent,
           userId: authorId,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${backendStatus.authToken}`,
+          },
         }
       );
 
       if (response.status === 201) {
-        // console.log("Comment created successfully:", response.data.newComment);
         setContent("");
         window.location.reload(); // Reload the entire page
       } else {
-        // console.log("Unexpected response:", response);
+        console.log("Unexpected response:", response);
       }
     } catch (err) {
       console.error("Error creating comment:", err);
+      alert("Failed to create comment. Please try again later.");
     }
   };
 
@@ -47,10 +74,8 @@ const CommentCreate = ({ postId }) => {
         value={content}
         onChange={(e) => setContent(e.target.value)}
       />
-
       <div className="w-full h-[4vw] flex flex-row justify-end ">
-        <div className="border-l-4  border-black px-4 align-middle items-center ">
-          {" "}
+        <div className="border-l-4 border-black px-4 align-middle items-center ">
           <button
             onClick={createComment}
             className="translate-y-1 btn bg-accent border-0 px-4 text-foreground font-poppinsbold text-lg hover:bg-foreground hover:text-background"

@@ -14,7 +14,21 @@ export default function Navbar() {
   const containerRef = useRef(null);
   const backendStatus = useBackendStatus();
   const router = useRouter();
-  // console.log(backendStatus);
+  const fetchProfilePic = async () => {
+    if (backendStatus.isLoggedIn && backendStatus.userId) {
+      try {
+        const response = await axios.get(
+          `http://localhost:4000/profile-pic/${backendStatus.userId}`
+        );
+        const { profilePic } = response.data; // Extract Base64 string
+        backendStatus.setProfilePic(profilePic); // Store in state
+      } catch (error) {
+        console.error("Error fetching profile picture:", error);
+      }
+    }
+  };
+
+  fetchProfilePic();
 
   // Fetch search results
   const fetchSearchResults = async (term) => {
@@ -50,20 +64,6 @@ export default function Navbar() {
     backendStatus.setProfilePic(null);
 
     router.push("/");
-  };
-
-  const fetchProfilePic = async () => {
-    if (backendStatus.isLoggedIn && backendStatus.userId) {
-      try {
-        const response = await axios.get(
-          `http://localhost:4000/profile-pic/${backendStatus.userId}`
-        );
-        const { profilePic } = response.data; // Extract Base64 string
-        backendStatus.setProfilePic(profilePic); // Store in state
-      } catch (error) {
-        console.error("Error fetching profile picture:", error);
-      }
-    }
   };
 
   // Handle clicking a result

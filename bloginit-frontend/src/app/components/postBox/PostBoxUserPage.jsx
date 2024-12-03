@@ -63,18 +63,27 @@ const PostBox = ({ post }) => {
             referrerPolicy="no-referrer"
           />
         </div>
-        <div className="h-full flex items-center border-l-4  border-black px-4">
+        <Link
+          href={`/feed/${post_id}`}
+          className="h-full flex items-center border-l-4  border-black px-4"
+        >
           <h3 className="text-[2vw] "> {title}</h3>
-        </div>
+        </Link>
       </div>
-      <div className="text-[1.5vw] w-full max-h-[15.3vw] border-y-4 border-black overflow-hidden text-ellipsis line-clamp-6 p-4 text-justify">
+      <Link
+        href={`/feed/${post_id}`}
+        className="text-[1.5vw] w-full max-h-[15.3vw] border-y-4 border-black overflow-hidden text-ellipsis line-clamp-6 p-4 text-justify"
+      >
         {content}
-      </div>
+      </Link>
 
       <div className="w-full h-[4vw] flex flex-row justify-between">
-        <div className="h-full flex items-center border-r-4 border-black px-4">
+        <Link
+          href={`/feed/${post_id}`}
+          className="h-full flex items-center border-r-4 border-black px-4"
+        >
           <h3 className="text-[2vw] "> Comments: {commentCount}</h3>
-        </div>
+        </Link>
         <div className="h-full flex items-center border-l-4 border-black px-4">
           <h3 className="text-[2vw]">09-11-24</h3>
         </div>

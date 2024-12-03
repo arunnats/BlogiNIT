@@ -10,17 +10,35 @@ const PostCreation = () => {
   const authorId = backendStatus.userId;
   const router = useRouter();
 
+  // Helper function for sanitizing inputs
+  const sanitizeInput = (input) => {
+    return input.replace(/[<>;]/g, ""); // Remove characters that might be used in SQL injection or XSS
+  };
+
   const handlePostCreation = async () => {
-    console.log(backendStatus.authToken);
     if (!backendStatus.authToken) {
       alert("You need to log in to create a post.");
+      return;
+    }
+
+    // Sanitize user inputs
+    const sanitizedTitle = sanitizeInput(title);
+    const sanitizedContent = sanitizeInput(content);
+
+    if (!sanitizedTitle || !sanitizedContent) {
+      alert("Title and content cannot be empty.");
+      return;
+    }
+
+    if (sanitizedTitle.length > 100) {
+      alert("Title is too long. Please keep it under 100 characters.");
       return;
     }
 
     try {
       const response = await axios.post(
         "http://localhost:4000/profile/create-post",
-        { title, content, authorId },
+        { title: sanitizedTitle, content: sanitizedContent, authorId },
         {
           headers: {
             "Content-Type": "application/json",

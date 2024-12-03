@@ -13,19 +13,51 @@ const ProfileCreation = () => {
   const backendStatus = useBackendStatus();
   const router = useRouter();
 
-  const handleProfilePicChange = (e) => {
-    setProfilePic(e.target.files[0]);
+  // Helper function to sanitize inputs
+  const sanitizeInput = (input) => {
+    return input.replace(/[^\w.@-]/g, ""); // Allow only alphanumeric, dots, @, hyphens, and underscores
+  };
+
+  // Input validation
+  const validateInputs = () => {
+    // Username validation
+    if (!username || username.length > 30) {
+      alert("Username must be between 1 and 30 characters long.");
+      return false;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Email format regex
+    if (!emailRegex.test(email)) {
+      alert("Please enter a valid email address.");
+      return false;
+    }
+    if (email.length > 50) {
+      alert("Email should not exceed 50 characters.");
+      return false;
+    }
+    if (password.length < 8) {
+      alert("Password should be at least 8 characters long.");
+      return false;
+    }
+    if (password !== repeatPassword) {
+      alert("Passwords do not match.");
+      return false;
+    }
+    if (profilePic && profilePic.type !== "image/png") {
+      alert("Profile picture must be a PNG image.");
+      return false;
+    }
+    return true;
   };
 
   const handleSignup = async () => {
-    if (password !== repeatPassword) {
-      alert("Passwords do not match.");
-      return;
-    }
+    const sanitizedUsername = sanitizeInput(username);
+    const sanitizedEmail = sanitizeInput(email);
+
+    if (!validateInputs()) return;
 
     const formData = new FormData();
-    formData.append("username", username);
-    formData.append("email", email);
+    formData.append("username", sanitizedUsername);
+    formData.append("email", sanitizedEmail);
     formData.append("password", password);
     formData.append("profile_pic", profilePic);
 
@@ -51,16 +83,26 @@ const ProfileCreation = () => {
         localStorage.setItem("profilePic", user.profile_pic || "");
 
         // Update the context state
-        setIsLoggedIn(true);
-        setUserId(user.user_id);
-        setAuthToken(token);
-        setProfilePic(user.profile_pic);
+        backendStatus.setIsLoggedIn(true);
+        backendStatus.setUserId(user.user_id);
+        backendStatus.setAuthToken(token);
+        backendStatus.setProfilePic(user.profile_pic);
 
         router.push(`/user/${user.user_id}`);
       }
     } catch (err) {
       console.error(err);
-      alert("Signup failed. Please check your information.");
+      alert("Signup failed. Please check your inputs and try again.");
+    }
+  };
+
+  const handleProfilePicChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type !== "image/png") {
+      alert("Only PNG images are allowed.");
+      setProfilePic(null);
+    } else {
+      setProfilePic(file);
     }
   };
 

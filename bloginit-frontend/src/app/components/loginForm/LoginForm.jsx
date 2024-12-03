@@ -7,15 +7,47 @@ import { useBackendStatus } from "@/app/context/BackendStatusContext";
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { setIsLoggedIn, setUserId, setProfilePic, setAuthToken } =
+  const { setIsLoggedIn, setUserId, setProfilePic, setAuthToken, isBackendUp } =
     useBackendStatus();
   const router = useRouter();
 
+  // Helper function to sanitize inputs
+  const sanitizeInput = (input) => {
+    return input.replace(/[^\w.@-]/g, ""); // Allow only alphanumeric, dots, @, hyphens, and underscores
+  };
+
+  // Input validation
+  const validateInputs = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Email format regex
+    if (!emailRegex.test(email)) {
+      alert("Please enter a valid email address.");
+      return false;
+    }
+    if (email.length > 30) {
+      alert("Email should not exceed 30 characters.");
+      return false;
+    }
+    if (password.length < 8) {
+      alert("Password should be at least 8 characters long.");
+      return false;
+    }
+    if (password.length > 50) {
+      alert("Password should not exceed 50 characters.");
+      return false;
+    }
+    return true;
+  };
+
   const handleLogin = async () => {
+    const sanitizedEmail = sanitizeInput(email);
+    const sanitizedPassword = sanitizeInput(password);
+
+    if (!validateInputs()) return;
+
     try {
       const response = await axios.post("http://localhost:4000/login", {
-        email,
-        password,
+        email: sanitizedEmail,
+        password: sanitizedPassword,
       });
 
       if (response.status === 200) {
@@ -38,13 +70,13 @@ const LoginForm = () => {
         console.log("Logged in successfully!");
 
         // Redirect to the user's profile page
-        if (backendStatus.isBackendUp) {
+        if (isBackendUp) {
           router.push(`/user/${user.user_id}`);
         }
       }
     } catch (err) {
       console.error(err);
-      alert("Login failed. Please check your credentials.");
+      alert("Login failed. Please check your credentials and try again.");
     }
   };
 
